@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const sgMail = require('@sendgrid/mail'); // Import SendGrid Mail library
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -9,13 +9,13 @@ const port = process.env.PORT || 3000;
 // Set SendGrid API Key from environment variable
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Configure CORS to allow only your frontend domain (important for security)
+// Configure CORS to allow only your specific frontend domains
 const corsOptions = {
-  origin: ['https://melbournecuratedstays.com.au', 'https://www.melbournecuratedstays.com.au'], // Add both www and non-www if applicable
-  methods: 'POST',
-  optionsSuccessStatus: 200
+  origin: ['https://melbournecuratedstays.com.au', 'https://www.melbournecuratedstays.com.au'], // Restrict to your frontend domains
+  methods: 'POST', // Only allow POST requests for your form
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); // Apply the configured CORS middleware
 app.use(express.json());
 
 // API endpoint for form submission
@@ -31,7 +31,7 @@ app.post('/submit-application', async (req, res) => {
         // Email content for SendGrid
         const msg = {
             to: 'contact@melbournecuratedstays.com.au', // Your recipient email
-            from: 'contact@melbournecuratedstays.com.au', // Your *verified sender email in SendGrid*
+            from: 'contact@melbournecuratedstays.com.au', // Your verified sender email in SendGrid
             subject: `New Partnership Application from ${name}`,
             html: `
                 <p>You have received a new partnership application:</p>
